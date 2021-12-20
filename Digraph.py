@@ -22,23 +22,3 @@ class Digraph(Graph):
         self.add_edge(a, b)
         self.add_edge(b, a)
 
-    def add_vertice(self, vertice_name : str):
-        if(vertice_name in self.dict_for_vertices.keys()):
-            raise ValueError("Vertice already in graph")
-
-        self.dict_for_vertices[vertice_name] = []
-
-    def get_neighbors(self, vertice_name : str):
-        if(vertice_name not in self.dict_for_vertices.keys()):
-            raise ValueError("Vertice not in graph")
-
-        return self.dict_for_vertices[vertice_name]
-
-    # Returns all vertices in the graph
-    def get_vertices(self):
-        return self.dict_for_vertices.keys()
-
-    def print_vertices(self):
-        for vertice in self.dict_for_vertices.keys():
-            print(vertice, " ", self.dict_for_vertices[vertice])
-

@@ -13,41 +13,41 @@ from Digraph import Digraph
 #
 # Time complexity: O(|V| + |E|)
 def Tarjans(G : Digraph):
-    listOfComponents = list() # Stores each of the components in a unique list
-    currentIndex = 0
+    list_of_components = list() # Stores each of the components in a unique list
+    current_index = 0
     stack = list()
 
     stack = []
     indices = dict.fromkeys(G.get_vertices(), -1)
-    lowValues = dict.fromkeys(G.get_vertices(), -1) # Used for storing the component a given indexed vertice belongs to.
+    low_values = dict.fromkeys(G.get_vertices(), -1) # Used for storing the component a given indexed vertice belongs to.
 
     for vertice in G.get_vertices():
         if(indices[vertice] == -1): # Is the index undefined / -1?
-            connect(G, vertice, indices, lowValues, stack, currentIndex, listOfComponents)
+            connect(G, vertice, indices, low_values, stack, current_index, list_of_components)
 
-    return listOfComponents
+    return list_of_components
 
 
 # Helper function for Tarjan's.
 # Implementation partly guided by psuedocode from https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm 
 # with some minor changes to make it Python specific.
-def connect(G : Digraph, vertex : str, indices : List[int], lowValues : List[int], stack : List[str], currentIndex : int, returnList: List[List]):
-    indices[vertex] = currentIndex
-    lowValues[vertex] = currentIndex
+def connect(G : Digraph, vertex : str, indices : List[int], low_values : List[int], stack : List[str], current_index : int, return_list: List[List]):
+    indices[vertex] = current_index
+    low_values[vertex] = current_index
 
-    currentIndex += 1
+    current_index += 1
     stack.append(vertex)
 
     for neighbor in G.get_neighbors(vertex):
         if(indices[neighbor] == -1):
-            connect(G, neighbor, indices, lowValues, stack, currentIndex, returnList)
-            lowValues[vertex] = min(lowValues[vertex], lowValues[neighbor])
+            connect(G, neighbor, indices, low_values, stack, current_index, return_list)
+            low_values[vertex] = min(low_values[vertex], low_values[neighbor])
         elif(neighbor in stack):
-            lowValues[vertex] = min(lowValues[vertex], indices[neighbor])
+            low_values[vertex] = min(low_values[vertex], indices[neighbor])
 
     # This tells us we can start building a component -- basically we have backtracked far enough to know we are at the initial
     # index of the 'root' of a strong component -- here root just means the lowest valued index of a node of a component.
-    if(lowValues[vertex] == indices[vertex]):
+    if(low_values[vertex] == indices[vertex]):
         newComponent = list() 
 
         while(1): # Get the vertices that make up a component
@@ -58,53 +58,52 @@ def connect(G : Digraph, vertex : str, indices : List[int], lowValues : List[int
             if(currentValue == vertex): # We are done building this component once we have gotten the 'root' of the component from the stack
                 break
         
-        returnList.append(newComponent)
+        return_list.append(newComponent)
 
 
 # Tests various cases for Tarjan's algorithm -- including but not limited to
 # the empty graph, the graph of one vertice, graphs with multiple components, graphs of one component, 
 # and graphs of multiple components with long paths amongst each other.
 def TestsForTarjans():
-    testsPassed = True
+    tests_passed = True
 
-    EmptyGraph = Digraph([])
-    GraphWithOneVertice = Digraph(["A"])
+    empty_graph = Digraph([])
+    graph_with_one_vertice = Digraph(["A"])
 
-    GraphWithMultipleComponents = Digraph(["A", "B", "C", "D", "E"])
-    GraphWithMultipleComponents.add_dual_edge("A", "B") # Defines a component
-    GraphWithMultipleComponents.add_dual_edge("C", "D") # Defines a component
-    GraphWithMultipleComponents.add_edge("E", "D") # Will be an isolated component but does have a connection to D
-    ValidComponents = [["A", "B"], ["C", "D"], ["E"]]
+    graph_with_multiple_components = Digraph(["A", "B", "C", "D", "E"])
+    graph_with_multiple_components.add_dual_edge("A", "B") # Defines a component
+    graph_with_multiple_components.add_dual_edge("C", "D") # Defines a component
+    graph_with_multiple_components.add_edge("E", "D") # Will be an isolated component but does have a connection to D
+    valid_components = [["A", "B"], ["C", "D"], ["E"]]
 
     # Graph that contains a long path from left to right but only has one valid component
-    GraphWithLongPath = Digraph(["A", "B", "C", "D", "E"])
-    GraphWithLongPath.add_edge("A", "B")
-    GraphWithLongPath.add_edge("B", "C")
-    GraphWithLongPath.add_edge("C", "D")
-    GraphWithLongPath.add_edge("D", "E") 
-    GraphWithLongPath.add_edge("E", "D") # The only two node component in the graph will be D, E
-    ValidComponentsForLongPath = [["A"], ["B"], ["C"], ["D", "E"]]
+    graph_with_long_path = Digraph(["A", "B", "C", "D", "E"])
+    graph_with_long_path.add_edge("A", "B")
+    graph_with_long_path.add_edge("B", "C")
+    graph_with_long_path.add_edge("C", "D")
+    graph_with_long_path.add_edge("D", "E") 
+    graph_with_long_path.add_edge("E", "D") # The only two node component in the graph will be D, E
+    valid_components_for_long_path = [["A"], ["B"], ["C"], ["D", "E"]]
 
-
-    if(Tarjans(EmptyGraph) != []):
+    if(Tarjans(empty_graph) != []):
         print("Test failed for empty graph")
-        testsPassed = False
+        tests_passed = False
 
-    if(Tarjans(GraphWithOneVertice) != [["A"]]):
+    if(Tarjans(graph_with_one_vertice) != [["A"]]):
         print("Test failed for graph with one vertice")
-        testsPassed = False
+        tests_passed = False
 
-    for component in Tarjans(GraphWithMultipleComponents):
-        if(sorted(component) not in ValidComponents):
+    for component in Tarjans(graph_with_multiple_components):
+        if(sorted(component) not in valid_components):
             print("Test failed for multiple components")
-            testsPassed = False
+            tests_passed = False
     
-    for component in Tarjans(GraphWithLongPath):
-        if(sorted(component) not in ValidComponentsForLongPath):
+    for component in Tarjans(graph_with_long_path):
+        if(sorted(component) not in valid_components_for_long_path):
             print("Test failed for graph with a long path but only one non-trivial component")
-            testsPassed = False
+            tests_passed = False
 
-    if(testsPassed):
+    if(tests_passed):
         print("All tests passed.")
 
 
