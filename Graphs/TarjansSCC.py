@@ -7,9 +7,9 @@ from Digraph import Digraph
 # Tarjan's strongly connected component algorithm is a way for finding, in a directed graph,
 # all vertices that are reachable from one another.
 # The algorithm largely works by placing vertices on the stack in the order they are visited
-# from a start node (by DFS). Items are removed from the stack only if their neighbors are also on the stack,
-# otherwise we further recurse on the neighbors of a given vertice or if we are done fully with a component
-# and don't have a path reachable to another vertex we just go to another vertex in the graph.
+# from a start node (by DFS). From there, items are removed from the stack only if their neighbors are also on the stack,
+# otherwise we further recurse on the neighbors of a given vertice. If we are done fully with a component
+# and don't have a path reachable to another vertex we just go to another vertex in the graph arbitrarily (lexicographically, for example)
 #
 # Time complexity: O(|V| + |E|)
 def Tarjans(G : Digraph):
@@ -30,7 +30,6 @@ def Tarjans(G : Digraph):
 
 # Helper function for Tarjan's.
 # Implementation partly guided by psuedocode from https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm 
-# with some minor changes to make it Python specific.
 def connect(G : Digraph, vertex : str, indices : List[int], low_values : List[int], stack : List[str], current_index : int, return_list: List[List]):
     indices[vertex] = current_index
     low_values[vertex] = current_index

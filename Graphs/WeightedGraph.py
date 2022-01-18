@@ -1,7 +1,15 @@
-from Digraph import Digraph
 from Graph import Graph
+from collections import defaultdict
+from typing import List
 
 class WeightedGraph(Graph):
+    def __init__(self, list_of_vertices : List[str]):
+        self.dict_for_vertices = defaultdict()
+        self.dict_for_edges = defaultdict()
+
+        for vertice in list_of_vertices:
+            self.add_vertice(vertice)
+
     def add_edge(self, a : str, b : str, value : float):
         if(a not in self.dict_for_vertices.keys() or b not in self.dict_for_vertices.keys()):
             raise ValueError("At least one vertice is undefined")
@@ -23,4 +31,6 @@ class WeightedGraph(Graph):
                     return_edges.append(possible_edge_to_append)
 
         return sorted(return_edges, key = lambda x : x[2])
+    
+
 
